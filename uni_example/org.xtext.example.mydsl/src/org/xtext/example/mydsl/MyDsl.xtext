@@ -1,0 +1,64 @@
+grammar org.xtext.example.mydsl.MyDsl with org.eclipse.xtext.common.Terminals
+
+generate myDsl "http://www.xtext.org/example/mydsl/MyDsl"
+
+//ParserRule - An EntitySystem has a name which is an ID 
+// and then many declarations which is why declaration+=Declaration*
+EntitySystem: // system University
+	'system' name=ID declaration+=Declaration*
+;
+//Above is equal to
+// EntitySystem ::= ‘system’ name=ID Declaration*
+
+
+
+Declaration:
+	Entity | Relation
+	;
+//Above is equal to
+// Declaration ::= Entity | Relation
+
+
+
+//Entity starts with keyword entity. There might be a ':' which is why
+// (':' base=ID)?
+// += means that there is a list of attributes
+// = means there there is only one attribute
+// ()? Means that the thing in the () is optional
+// Attribute* means that there can be 0 to many attributes
+Entity: // entity Person
+	'entity' name=ID (':' base=[Entity])? attributes+=Attribute*
+;
+//Above is equal to
+//Entity ::= ‘entity’ name=ID (‘:’ super=ID:Entity)? Attribute*
+
+
+
+Attribute: // attribute name: String
+	'attribute' name=ID ':' type=ID
+;
+//Above is equals to:
+// Attribute ::= ‘attribute’ name=ID ‘:’ type=ID
+
+
+
+
+//Relation starts with keyword relation
+Relation:
+	'relation' 'from' fromType=[Entity] fromName=ID (fromMultiple?='*')?
+	'to' toName=ID (toMultiple?='*')? toType=[Entity]
+;
+//Above is equals to:
+// Relation ::= ‘relation’ ft=ID fn=ID (fm=‘*’)? ‘to’ tn=ID (tm=‘*’)? tt=ID
+
+
+/*
+// Proposed grammar
+// “EBNF++” = corresponds kind of to xtext
+nameOfRule ::= ´token´
+EntitySystem ::= ‘system’ name=ID Declaration*
+Declaration ::= Entity | Relation
+Entity ::= ‘entity’ name=ID (‘:’ super=ID:Entity)? Attribute*
+Attribute ::= ‘attribute’ name=ID ‘:’ type=ID
+Relation ::= ‘relation’ ft=ID fn=ID (fm=‘*’)? ‘to’ tn=ID (tm=‘*’)? tt=ID
+*/
