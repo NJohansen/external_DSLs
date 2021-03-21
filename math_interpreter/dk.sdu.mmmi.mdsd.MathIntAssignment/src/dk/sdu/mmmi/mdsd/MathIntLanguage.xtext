@@ -1,57 +1,55 @@
-grammar dk.sdu.mmmi.mdsd.MathIntLanguage with org.eclipse.xtext.common.Terminals
-
-generate mathIntLanguage "http://www.sdu.dk/mmmi/mdsd/MathIntLanguage"
-
-
-MathExp:
-	'result' 'is' exp=Exp
-;
-
-// So it takes a Factor, and if there is a '+' then it creates a Plus object. Both Minus and Plus object has a left and right.
-// 5 + 1 + 1
-Exp returns Expression:  
-	PlusOrMinus 
-;
-
-PlusOrMinus returns Expression: // 5 = MultiplyOrDivsion 
-	MultiplyOrDivision (('+' {Plus.left=current} | '-' {Minus.left=current}) right=MultiplyOrDivision)*
-;
-
-MultiplyOrDivision returns Expression:
-	Primary (('*' {Multiply.left=current} | '/' {Division.left=current}) right=Primary)*
-;
-
-
-Primary returns Expression:
-	Number | Parenthesis
-;
-
-Parenthesis returns Expression:
-	'(' Exp ')'
-;
-
-Number:
-	{Number} value=INT
-;
-
-/*
- * What is Left recursion?
- * It is bad for LL(K), i.e. ANTLR parser used by xtext
- * But no problem for eg. LR, GLR parsers
- * 
- * Collection of rules of the form: 
- * A_0 -> sequence of elements x_1 ... x_n
- *  x_i is either non-terminal A_i or terminal T_i
- * 
- * Left recursion?
- * A_1 = A_0 or there is indirect recursion through A_1 being left_recursive with regards to A_0
- * Left recursion = A_0 -> A_0 T_1 T_2
- * NB.
- * E ::= N | E '-' E
- * E -> N
- * E -> E '-' E
- * 
- */
- 
- 
- 
+	grammar dk.sdu.mmmi.mdsd.MathIntLanguage with org.eclipse.xtext.common.Terminals
+	
+	generate mathIntLanguage "http://www.sdu.dk/mmmi/mdsd/MathIntLanguage"
+	
+	
+	MathExp:
+		'result' 'is' exp=Exp
+	;
+	
+	Exp returns Expression:  
+		PlusOrMinus 
+	;
+	
+	PlusOrMinus returns Expression: 
+		MultiplyOrDivision (('+' {Plus.left=current} | '-' {Minus.left=current}) right=MultiplyOrDivision)*
+	;
+	
+	MultiplyOrDivision returns Expression:
+		Primary (('*' {Multiply.left=current} | '/' {Division.left=current}) right=Primary)*
+	;
+	
+	
+	Primary returns Expression:
+		Number | Parenthesis
+	;
+	
+	Parenthesis returns Expression:
+		'(' Exp ')'
+	;
+	
+	Number:
+		{Number} value=INT
+	;
+	
+	/*
+	 * What is Left recursion?
+	 * It is bad for LL(K), i.e. ANTLR parser used by xtext
+	 * But no problem for eg. LR, GLR parsers
+	 * 
+	 * Collection of rules of the form: 
+	 * A_0 -> sequence of elements x_1 ... x_n
+	 *  x_i is either non-terminal A_i or terminal T_i
+	 * 
+	 * Left recursion?
+	 * A_1 = A_0 or there is indirect recursion through A_1 being left_recursive with regards to A_0
+	 * Left recursion = A_0 -> A_0 T_1 T_2
+	 * NB.
+	 * E ::= N | E '-' E
+	 * E -> N
+	 * E -> E '-' E
+	 * 
+	 */
+	 
+	 
+	 
